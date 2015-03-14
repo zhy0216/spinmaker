@@ -53,7 +53,7 @@ $(function(){
             $("#height-input").val(this.model.get('height'));
             $("#type-select").val(this.model.get('type'));
             $('#bgc-input').val(this.model.get("backgroundColor"));
-            $('.color-picker').colorpicker('update');
+            $('.color-picker').colorpicker('setValue', this.model.get("backgroundColor")).colorpicker('update');
         }
 
 
@@ -78,6 +78,10 @@ $(function(){
 
 
               make: function(type, width, height, bgc){
+                    if(type){SPINNER.attributes.type = type;}
+                    if(width){SPINNER.attributes.width = width;}
+                    if(height){SPINNER.attributes.height = height;}
+                    if(bgc){SPINNER.attributes.backgroundColor = bgc;}
                     SPINNER_FORM_VIEW.render();
               }
 
