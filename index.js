@@ -1,5 +1,7 @@
 $(function(){
 
+
+// backbone stuff
     var Spinner = Backbone.Model.extend({
         defaults: {
 
@@ -29,6 +31,15 @@ $(function(){
     var SpinnerShowView = Backbone.View.extend({
 
     })
+
+
+
+// start
+
+$('.color-picker').colorpicker({
+    format: "rgba",
+
+});
 
 
 
