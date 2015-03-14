@@ -20,7 +20,41 @@ $(function(){
 
     var SPINNER = new Spinner();
 
+
     var SPINNER_FORM_VIEW = new (Backbone.View.extend({
+
+        events: {
+            'keypress #width-input': 'updateWidth',
+            'keypress #height-input': 'updateHeight',
+            'change #type-select': 'updateType',
+            'changeColor .color-picker': 'updateBGC',
+        },
+
+        updateWidth: function(){
+            this.model.set("width", $('#width-input').val() + "px");
+        },
+
+        updateHeight: function(){
+            this.model.set("height", $('#height-input').val() + "px");
+        },
+
+        updateType: function(){
+            this.model.set("type", $('#type-select').val());
+        },
+
+        updateBGC: function(){
+            if($("#bgc-input").val()){
+                this.model.set("backgroundColor", $("#bgc-input").val());
+            }
+        },
+
+        render: function(){
+            $("#width-input").val(this.model.get('width'));
+            $("#height-input").val(this.model.get('height'));
+            $("#type-select").val(this.model.get('type'));
+            $('#bgc-input').val(this.model.get("backgroundColor"));
+            $('.color-picker').colorpicker('update');
+        }
 
 
 
@@ -32,25 +66,28 @@ $(function(){
 
     var ROUTER = new (Backbone.Router.extend({
               routes: {
-                '': 'make',
+                '': 'init',
                 'show-code/:spinnertype': 'showCode',
                 'make/type=:type&width=:width&height=:height&bgc=:bgc': 'make',
               },
 
+              init: function(){
+                ROUTER.navigate(SPINNER.makeUpUrl());
+                SPINNER_FORM_VIEW.render();
+              },
+
+
               make: function(type, width, height, bgc){
-                    if(type){SPINNER.type = type;}
-                    if(width){SPINNER.width = width;}
-                    if(height){SPINNER.height = height;}
-                    if(bgc){SPINNER.backgroundColor = bgc;}
-
-                    if(!type || !width || !height || !bgc){
-                        this.navigate(SPINNER.makeUpUrl());
-                    }
-
+                    SPINNER_FORM_VIEW.render();
               }
 
 
     }))();
+
+    SPINNER.on("change", function(){
+        var url = this.makeUpUrl();
+        ROUTER.navigate(url);
+    })
 
 
 
