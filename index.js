@@ -10,6 +10,10 @@ $(function(){
             return urlTemplate(this.attributes);
         },
 
+        getSpinnerShowerId: function(){
+            return "spinner" + this.attributes.type;
+        },
+
         defaults: {
             type: "1", // start from "1"
             width: "30px",
@@ -24,8 +28,8 @@ $(function(){
     var SPINNER_FORM_VIEW = new (Backbone.View.extend({
 
         events: {
-            'keypress #width-input': 'updateWidth',
-            'keypress #height-input': 'updateHeight',
+            'keyup #width-input': 'updateWidth',
+            'keyup #height-input': 'updateHeight',
             'change #type-select': 'updateType',
             'changeColor .color-picker': 'updateBGC',
         },
@@ -49,8 +53,8 @@ $(function(){
         },
 
         render: function(){
-            $("#width-input").val(this.model.get('width'));
-            $("#height-input").val(this.model.get('height'));
+            $("#width-input").val(this.model.get('width').slice(0,-2));
+            $("#height-input").val(this.model.get('height').slice(0,-2));
             $("#type-select").val(this.model.get('type'));
             $('#bgc-input').val(this.model.get("backgroundColor"));
             $('.color-picker').colorpicker('setValue', this.model.get("backgroundColor")).colorpicker('update');
@@ -60,9 +64,31 @@ $(function(){
 
     }))({el: $("#spinner-form"), model: SPINNER});
 
-    var SpinnerShowView = Backbone.View.extend({
+    var SPINNER_SHOW_VIEW = new (Backbone.View.extend({
 
-    });
+        switchSpinner: function(){
+            var spinnerHTML = $("#" + SPINNER.getSpinnerShowerId()).html();
+            this.$el.html(spinnerHTML);
+        },
+
+        render: function(){
+            var $spinner = this.$(".spinner");
+
+            if($spinner.length == 0){
+                this.switchSpinner();
+                $spinner = this.$(".spinner");
+            }
+
+
+            $spinner.css("width", this.model.get("width"));
+            $spinner.css("height", this.model.get("height"));
+            $spinner.css("background-color", this.model.get("backgroundColor"));
+
+            return this;
+        }
+
+
+    }))({el: $('#spinner-shower'), model: SPINNER});
 
     var ROUTER = new (Backbone.Router.extend({
               routes: {
@@ -74,6 +100,7 @@ $(function(){
               init: function(){
                 ROUTER.navigate(SPINNER.makeUpUrl());
                 SPINNER_FORM_VIEW.render();
+                SPINNER_SHOW_VIEW.render();
               },
 
 
@@ -83,6 +110,7 @@ $(function(){
                     if(height){SPINNER.attributes.height = height;}
                     if(bgc){SPINNER.attributes.backgroundColor = bgc;}
                     SPINNER_FORM_VIEW.render();
+                    SPINNER_SHOW_VIEW.render();
               }
 
 
@@ -91,6 +119,7 @@ $(function(){
     SPINNER.on("change", function(){
         var url = this.makeUpUrl();
         ROUTER.navigate(url);
+        SPINNER_SHOW_VIEW.render();
     })
 
 
