@@ -71,6 +71,12 @@ $(function(){
             this.$el.html(spinnerHTML);
         },
 
+        serilize: function(){
+            this.model.attributes.width = this.$el.find('.width').css("width");
+            this.model.attributes.height = this.$el.find('.height').css("height");
+            this.model.attributes.backgroundColor = this.$el.find('.bgc').css("background-color");
+        },
+
         render: function(){
             var $spinner = this.$(".spinner");
 
@@ -80,14 +86,9 @@ $(function(){
             }
 
 
-            $spinner.css("width", this.model.get("width"));
-            $spinner.css("height", this.model.get("height"));
-            var bgcClass = $spinner.attr('bgc-class');
-            var $target = $spinner;
-            if(bgcClass){
-                $target = $spinner.find(bgcClass);
-            }
-            $target.css("background-color", this.model.get("backgroundColor"));
+            this.$el.find('.width').css("width", this.model.get("width"));
+            this.$el.find('.height').css("height", this.model.get("height"));
+            this.$el.find('.bgc').css("background-color", this.model.get("backgroundColor"));
             return this;
         }
 
@@ -125,7 +126,8 @@ $(function(){
         var url = this.makeUpUrl();
         ROUTER.navigate(url);
         SPINNER_SHOW_VIEW.switchSpinner();
-        SPINNER_SHOW_VIEW.render();
+        SPINNER_SHOW_VIEW.serilize();
+        SPINNER_FORM_VIEW.render();
     })
 
     SPINNER.on("change", function(){
