@@ -3,10 +3,14 @@ $(function(){
 // util func
 
 // backbone stuff
+    _.templateSettings = {
+      interpolate: /\{\{(.+?)\}\}/g
+    };
+
     var Spinner = Backbone.Model.extend({
 
         makeUpUrl: function(){
-            var urlTemplate = _.template("make/type=<%= type %>&width=<%= width %>&height=<%= height %>&bgc=<%= backgroundColor %>");
+            var urlTemplate = _.template("make/type={{ type }}&width={{ width }}&height={{ height }}&bgc={{ backgroundColor }}");
             return urlTemplate(this.attributes);
         },
 
@@ -32,6 +36,14 @@ $(function(){
             'keyup #height-input': 'updateHeight',
             'change #type-select': 'updateType',
             'changeColor .color-picker': 'updateBGC',
+            'click .show-code-btn': function(){
+                var index = this.model.get("type") -1;
+                var $target = $("#source-frame li:eq("+ parseInt(index, 10) +")");
+                var cssTemplate = _.template($target.find(".css-code").html());
+                var content = cssTemplate(this.model.attributes);
+                $target.find(".css-code").html(content);
+                showSourceForActiveSpinner(index);
+            },
         },
 
         updateWidth: function(){
@@ -120,6 +132,26 @@ $(function(){
 
 
     }))();
+
+      function showSourceForActiveSpinner(index) {
+        // Exit if the source-frame is already visible
+        if ($("#source-frame").hasClass("visible")) return;
+
+        // Show the corresponding li in the source list
+        $("#source-frame li:eq("+ parseInt(index, 10) +")").addClass("visible");
+
+        $("#source-frame").addClass("visible");
+      }
+
+      function dismissSourceFrame() {
+        $("#source-frame .visible").removeClass("visible");
+        $("#source-frame").removeClass("visible");
+      }
+
+      $("#source-frame ul").click(function(e) {
+        dismissSourceFrame();
+      });
+
 
 
     SPINNER.on("change:type", function(){
